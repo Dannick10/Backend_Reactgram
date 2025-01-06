@@ -13,12 +13,19 @@ const app = express()
 //config JSON and FORM DATA response 
 
 app.use(express.json())
-
 app.use(express.urlencoded({extended: false}))
+app.use(cors({Credential: true, origin: "*"}))
 
 //routes
 
-const router = require("./routes/Router")
+//upload directory
+app.use("/uploads", express.static(path.join(__dirname,"/uploads")))
+
+//DB CONNECTION
+require("./config/db.js").connectDB()
+
+const router = require("./routes/Router");
+const exp = require("constants");
 app.use(router)
 
 app.listen(port, () => {
