@@ -1,6 +1,9 @@
 const User = require("../models/User");
 const bycript = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { default: mongoose } = require("mongoose");
+const { use } = require("../routes/UserRoutes");
+const mongoose = require("mongoose")
 
 const jwtSecret = process.env.JWT_SECRET;
 
@@ -87,7 +90,38 @@ const getCurrentUser = async(req,res) => {
 }
 
 const update = async(req,res) => {
-  res.send("update")
+ 
+  const {name, password, bio} = req.body
+  
+  let profileImage = null
+  
+  if(req.file) {
+      profileImage = req.file.filename 
+  }
+
+  const reqUser = req.user
+
+  const user = await User.findById(mongoose.Types.ObjectId(reqUser._id)).select("-password") 
+
+  if(name) {
+    user.name = name
+  }
+
+  if(password) {
+    const salt = await bycript.genSalt();
+    const passwordHash = await bycript.hash(password, salt);
+
+    user.password = passwordHash
+  }
+
+  if(bio) {
+      user.bio = bio
+  }
+
+
+  await user.save()
+
+  res.status(200).json(user)
 }
 
 module.exports = {
