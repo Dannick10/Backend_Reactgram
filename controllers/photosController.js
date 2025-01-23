@@ -102,10 +102,42 @@ const getPhotoById = async(req,res) => {
     res.status(200).json(photo)
 }
 
+const upddatePhoto = async(req,res) => {
+
+    const {id} = req.params 
+    const {title} = req.body 
+
+    const reqUser = req.user 
+
+    const photo = await Photo.findById(id)
+
+    if(!photo) {
+        res.status(404).json({erros: ["Foto não encontrada"]})
+    }
+
+    console.log(photo)
+    // cehck if photo belongs to user 
+
+    if(!photo.userId.equals(reqUser._id)) {
+        res.status(402).json({erros: ["não permitindo"]})
+        return 
+    }
+
+    if(title) {
+        photo.title = title 
+    }
+
+    await photo.save()
+
+    res.status(202).json(photo)
+
+}
+
 module.exports = {
     insertPhoto,
     deletePhoto,
     getAllPhotos,
     getUserPhotos,
-    getPhotoById
+    getPhotoById,
+    upddatePhoto,
 }
