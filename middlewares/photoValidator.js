@@ -31,7 +31,18 @@ const photoUpdateValidation = () => {
     ]
 }
 
+const commentValidation = () => {
+    return [
+        body("comments")
+        .isString()
+        .withMessage("Comentário é obrigatório")
+        .isLength({min: 3})
+        .withMessage("comentário precisa ter no mínimo 3 caracteres")
+    ]
+}
+
 module.exports = {
     photoInsertValidation,
-    photoUpdateValidation
+    photoUpdateValidation,
+    commentValidation
 }
